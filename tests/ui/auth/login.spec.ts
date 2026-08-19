@@ -1,9 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../../pages/auth/LoginPage';
 import { CookieConsentComponents } from '../../../pages/components/CookieConsentComponent';
-import { LoginUser } from '../../../types/loginUser.types';
 import { invalidLoginUser, validLoginUser } from '../../../test-data/LoginUsers';
-import { validUser } from '../../../test-data/SignupUsers';
 import { HeaderComponent } from '../../../pages/components/HeaderComponent';
 
 test.describe('Login', ()=>{
