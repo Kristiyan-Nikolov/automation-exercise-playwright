@@ -35,4 +35,8 @@ export class ProductPage extends BasePage{
     async selectBrand(brandName:string){
         await this.brandLinks.filter({hasText:brandName}).click();
     }
+    async openFirstProduct(){
+        const productFirst = this.page.locator('.productInfo').first();
+        await productFirst.getByRole('link', {name:'ViewProduct'}).click();
+    }
 }
