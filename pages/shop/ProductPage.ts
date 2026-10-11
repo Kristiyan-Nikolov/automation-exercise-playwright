@@ -39,4 +39,7 @@ export class ProductPage extends BasePage{
         const productFirst = this.page.locator('.productInfo').first();
         await productFirst.getByRole('link', {name:'ViewProduct'}).click();
     }
+    async open(): Promise<void> {
+        await this.navigate('');
+    }
 }
