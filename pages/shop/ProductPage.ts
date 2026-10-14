@@ -24,8 +24,8 @@ export class ProductPage extends BasePage{
     
     //A more robust way to handle the top scenario. Selenium used xPath. This looks cleaner.
     async openProductByName(name:string){
-        const product = this.page.locator('.productInfo').filter({hasText: name});
-        await product.getByRole('link', {name:'ViewProduct'}).click();
+        const product = this.page.locator('.productinfo').filter({hasText: name});
+        await product.getByRole('link', {name:'View Product'}).click();
     } 
 
     async selectCategory(category:string){
@@ -36,8 +36,9 @@ export class ProductPage extends BasePage{
         await this.brandLinks.filter({hasText:brandName}).click();
     }
     async openFirstProduct(){
-        const productFirst = this.page.locator('.productInfo').first();
-        await productFirst.getByRole('link', {name:'ViewProduct'}).click();
+        const productFirst = this.page.locator('.product-image-wrapper').first();
+        await productFirst.getByRole('link', {name:'View Product'}).click();
+        
     }
     async open(): Promise<void> {
         await this.navigate('');
