@@ -9,15 +9,16 @@ test.describe('Shop', ()=>{
     let product: ProductPage;
     let productDetails: ProductDetailsPage;
     let headerComponent: HeaderComponent;
-    let cookiePrompt: CookieConsentComponents;
+    //let cookiePrompt: CookieConsentComponents;
     
     test.beforeEach(async ({page})=>{
         product = new ProductPage(page);
         productDetails = new ProductDetailsPage(page);
         headerComponent = new HeaderComponent(page);
-        cookiePrompt = new CookieConsentComponents(page);
+        //cookiePrompt = new CookieConsentComponents(page);
         await headerComponent.open();
-        await cookiePrompt.acceptCookies();
+        await headerComponent.openProducts();
+        //await cookiePrompt.acceptCookies();
         //await page.route(
         ///googleads\.g\.doubleclick\.net|pagead2\.googlesyndication\.com/,
         //route => route.abort()
@@ -25,13 +26,22 @@ test.describe('Shop', ()=>{
         
     })
     test('Verify All Products and product detail page', async({page})=>{
-        await product.open();
-        console.log('Product cards:', await page.locator('.productinfo').count());
-        //await adOverlay.closeAdPopUp();
+        //await product.open();
+        //console.log('Product cards:', await page.locator('.productinfo').count());
+        await expect(page).toHaveURL(/\/products/);
+
         await product.openFirstProduct();
-        //await adOverlay.closeAdPopUp();
-        //await page.pause();
-        await expect(productDetails.productNameLabel).toBeVisible();
+
+        await productDetails.verifyProductDetails();
         
+    })
+    test('Search product should return correct item', async({page})=>{
+        await expect(page).toHaveURL(/\/products/);
+
+        await product.searchForProduct('Winter Top');
+
+        await expect(product.searchedProductsLabel).toBeVisible();
+
+        await product.verifyProductName('Winter Top');
     })
 })

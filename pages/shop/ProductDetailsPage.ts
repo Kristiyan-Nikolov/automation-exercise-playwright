@@ -1,4 +1,4 @@
-import { Page, Locator } from "@playwright/test";
+import { Page, Locator, expect } from "@playwright/test";
 import { BasePage } from "../base/BasePage";
 
 export class ProductDetailsPage extends BasePage{
@@ -16,5 +16,13 @@ export class ProductDetailsPage extends BasePage{
         this.availabilityLabel = page.locator('.product-information b').filter({hasText:'Availability:'});
         this.conditionLabel = page.locator('.product-information b').filter({hasText: 'Condition:'});
         this.brandLabeL = page.locator('.product-information b').filter({hasText: 'Brand:'});
+    }
+    async verifyProductDetails(){
+        await expect(this.productNameLabel).toBeVisible();
+        await expect(this.categoryLabel).toBeVisible();
+        await expect(this.brandLabeL).toBeVisible();
+        await expect(this.availabilityLabel).toBeVisible();
+        await expect(this.conditionLabel).toBeVisible();
+        await expect(this.priceLabel).toBeVisible();
     }
 }
