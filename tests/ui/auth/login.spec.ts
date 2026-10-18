@@ -15,14 +15,14 @@ test.describe('Login', ()=>{
         await loginPage.open();
         await cookiePrompt.acceptCookies();
     });
-    test('User can login with valid credentials', async ({ page }) => {
+    test('User can login with valid credentials', async () => {
 
       await loginPage.login(validLoginUser.email, validLoginUser.password);
 
       await expect(loginPage.loggedInLabel).toBeVisible();
     });
 
-    test('User cannot login with invalid credentials', async ({ page })=>{
+    test('User cannot login with invalid credentials', async ()=>{
 
       await loginPage.login(invalidLoginUser.email, invalidLoginUser.password);
 

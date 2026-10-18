@@ -15,7 +15,7 @@ test.describe('Contact Form', ()=>{
         await cookiePrompt.acceptCookies();
         await headerComponent.openContactForm();
     })
-    test('Fill contact form with valid data', async({page})=>{
+    test('Fill contact form with valid data', async()=>{
         await expect(contactPage.getInTouchLabel).toBeVisible();
         
         await contactPage.fillContanctForm(validContactForm.name, validContactForm.email, validContactForm.subject, validContactForm.message, validContactForm.filePath);
