@@ -8,6 +8,8 @@ export class ProductDetailsPage extends BasePage{
     readonly availabilityLabel: Locator;
     readonly conditionLabel: Locator;
     readonly brandLabeL: Locator;
+    readonly quantityInput: Locator;
+    readonly addToCartBtn: Locator;
     constructor(page:Page){
         super(page);
         this.productNameLabel = page.locator('.product-information h2');
@@ -16,6 +18,8 @@ export class ProductDetailsPage extends BasePage{
         this.availabilityLabel = page.locator('.product-information b').filter({hasText:'Availability:'});
         this.conditionLabel = page.locator('.product-information b').filter({hasText: 'Condition:'});
         this.brandLabeL = page.locator('.product-information b').filter({hasText: 'Brand:'});
+        this.quantityInput = page.locator('[id="quantity"]');
+        this.addToCartBtn = page.locator('.cart').getByText(' Add to cart ');
     }
     async verifyProductDetails(){
         await expect(this.productNameLabel).toBeVisible();
@@ -24,5 +28,11 @@ export class ProductDetailsPage extends BasePage{
         await expect(this.availabilityLabel).toBeVisible();
         await expect(this.conditionLabel).toBeVisible();
         await expect(this.priceLabel).toBeVisible();
+    }
+    async setQuantity(quantityNumber: string){
+        await this.quantityInput.fill(quantityNumber);
+    }
+    async addToCart(){
+        await this.addToCartBtn.click();
     }
 }

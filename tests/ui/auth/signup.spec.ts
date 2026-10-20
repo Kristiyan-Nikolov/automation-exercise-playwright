@@ -3,7 +3,7 @@ import { CookieConsentComponents } from '../../../pages/components/CookieConsent
 import { validUser, existingUser } from '../../../test-data/SignupUsers'
 import { SignupPage } from '../../../pages/auth/SignupPage';
 import { LoginPage } from '../../../pages/auth/LoginPage';
-import { AccontCreatedPage } from '../../../pages/auth/AccountCreatedPage';
+import { AccountCreatedPage } from '../../../pages/auth/AccountCreatedPage';
 import { generateUniqueEmail, generateUniqueUsername } from '../../../utils/dataGenerator';
 import { HeaderComponent } from '../../../pages/components/HeaderComponent';
 import { DeleteAccountPage } from '../../../pages/auth/DeleteAccountPage';
@@ -13,7 +13,7 @@ test.describe('Registration', ()=>{
         const loginPage = new LoginPage(page);
         const signupPage = new SignupPage(page);
         const header = new HeaderComponent(page);
-        const accountCreatedPage = new AccontCreatedPage(page);
+        const accountCreatedPage = new AccountCreatedPage(page);
         const deleteAccountPage = new DeleteAccountPage(page);
         const cookiePrompt = new CookieConsentComponents(page);
         const user = {

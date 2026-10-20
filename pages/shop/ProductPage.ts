@@ -9,8 +9,7 @@ export class ProductPage extends BasePage{
     readonly searchedProductsLabel: Locator;
     readonly productNameLabel: Locator;
     readonly searchButton: Locator;
-    readonly viewCartPrompt: Locator;
-    readonly continueShoppingPrompt: Locator;
+    
     
     
     //Learned a lot here. Instead of typing them one by one we have a more robust way to access them if they happen to change in the future.
@@ -23,8 +22,7 @@ export class ProductPage extends BasePage{
         this.searchedProductsLabel = page.locator('.productinfo h2');
         this.productNameLabel = page.locator('.productinfo p');
         this.searchButton = page.locator('[id="submit_search"]');
-        this.viewCartPrompt = page.locator('.modal-body a');
-        this.continueShoppingPrompt = page.locator('[data-dismiss="modal"]');
+       
         
         
         
@@ -69,12 +67,7 @@ export class ProductPage extends BasePage{
         await productCard.hover();
         await productCard.locator('a.add-to-cart:visible').first().click();
     }
-    async viewCartPromptRedirection(){
-        await this.viewCartPrompt.click();
-    }
-    async continueShopping(){
-        await this.continueShoppingPrompt.click();
-    }
+   
     async readProductDetails(cardNumber: number){
         const productCard = this.page.locator('.product-image-wrapper').nth(cardNumber);
         const name = await productCard.locator('.productinfo p').innerText();

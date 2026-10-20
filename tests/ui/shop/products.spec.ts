@@ -3,6 +3,7 @@ import { HeaderComponent } from "../../../pages/components/HeaderComponent";
 import { CookieConsentComponents } from "../../../pages/components/CookieConsentComponent";
 import { ProductPage } from "../../../pages/shop/ProductPage";
 import { ProductDetailsPage } from "../../../pages/shop/ProductDetailsPage";
+import { CartPage } from "../../../pages/shop/CartPage";
 
 
 test.describe('Shop', ()=>{
@@ -44,4 +45,5 @@ test.describe('Shop', ()=>{
 
         await product.verifyProductName('Winter Top');
     })
+  
 })

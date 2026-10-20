@@ -13,6 +13,9 @@ export class HeaderComponent extends BasePage {
     readonly subscriptionEmailInputField: Locator;
     readonly subscriptionButton: Locator;
     readonly subscriptionSuccessLabel: Locator;
+    readonly viewCartPrompt: Locator;
+    readonly continueShoppingPrompt: Locator;
+    readonly registerLoginRedirectionBtn: Locator;
     constructor(page: Page){
         super(page);
         this.homeLink = page.locator('a[href="/"]');
@@ -26,6 +29,9 @@ export class HeaderComponent extends BasePage {
         this.subscriptionEmailInputField = page.locator('[id="susbscribe_email"]');
         this.subscriptionButton = page.locator('[id="subscribe"]');
         this.subscriptionSuccessLabel = page.locator('.alert-success').filter({hasText:'You have been successfully subscribed!'});
+        this.viewCartPrompt = page.locator('.modal-body a');
+        this.continueShoppingPrompt = page.locator('[data-dismiss="modal"]');
+        this.registerLoginRedirectionBtn = page.locator('.modal-content a');
     }
     async openLoginPage(){
         await this.signInLogin.click();
@@ -54,6 +60,15 @@ export class HeaderComponent extends BasePage {
     async subscribeEmail(email: string){
         await this.subscriptionEmailInputField.fill(email);
         await this.subscriptionButton.click();
+    }
+     async viewCartPromptRedirection(){
+        await this.viewCartPrompt.click();
+    }
+    async continueShopping(){
+        await this.continueShoppingPrompt.click();
+    }
+    async loginRegisterRedirection(){
+        await this.registerLoginRedirectionBtn.click();
     }
     
 }

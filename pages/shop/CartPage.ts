@@ -23,5 +23,11 @@ export class CartPage extends BasePage{
             total: Number(totalText.replace('Rs. ',''))
         };
     }
-         
+    async verifyCartPageVisibility()
+    {
+        expect (this.proceedToCheckoutBtn).toBeVisible();
+    }
+    async proceedToCheckout(){
+        await this.proceedToCheckoutBtn.click();
+    }
 }
