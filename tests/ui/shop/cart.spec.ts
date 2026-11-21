@@ -1,4 +1,4 @@
-import { test, expect} from "../../fixtures";
+import { test, expect} from "../../../fixtures/fixtures";
 import { HeaderComponent } from "../../../pages/components/HeaderComponent";
 import { ProductPage } from "../../../pages/shop/ProductPage";
 import { CartPage } from "../../../pages/shop/CartPage";
@@ -82,5 +82,17 @@ test.describe('Cart Page', ()=>{
         await headerComponent.openCart();
 
         await cartPage.proceedToCheckout();
+        await headerComponent.loginRegisterRedirection();
+
+        await signup.registerUser(user);
+
+        expect(accountCreated.accountCreatedText).toBeVisible();
+        await accountCreated.clickContinue();
+
+        expect(headerComponent.logoutButton).toBeVisible();
+
+        await headerComponent.openCart();
+        await cartPage.proceedToCheckout();
+        
     })
 })

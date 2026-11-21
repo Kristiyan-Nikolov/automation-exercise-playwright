@@ -1,4 +1,4 @@
-import { test, expect} from "../../fixtures";
+import { test, expect} from "../../../fixtures/fixtures";
 import { HeaderComponent } from "../../../pages/components/HeaderComponent";
 import { CookieConsentComponents } from "../../../pages/components/CookieConsentComponent";
 import { ProductPage } from "../../../pages/shop/ProductPage";
