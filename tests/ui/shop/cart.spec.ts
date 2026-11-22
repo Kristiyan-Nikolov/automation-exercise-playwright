@@ -5,8 +5,11 @@ import { CartPage } from "../../../pages/shop/CartPage";
 import { ProductDetailsPage } from "../../../pages/shop/ProductDetailsPage";
 import { SignupPage } from "../../../pages/auth/SignupPage";
 import { validUser } from "../../../test-data/SignupUsers";
-import { generateUniqueEmail } from "../../../utils/dataGenerator";
+import { generateUniqueEmail, generateUniqueUsername } from "../../../utils/dataGenerator";
 import { AccountCreatedPage } from "../../../pages/auth/AccountCreatedPage";
+import { CheckoutPage } from "../../../pages/shop/CheckoutPage";
+import { LoginPage } from "../../../pages/auth/LoginPage";
+import { ValidCreditCard } from "../../../test-data/CreditCard";
 
 test.describe('Cart Page', ()=>{
     let headerComponent: HeaderComponent;
@@ -14,10 +17,14 @@ test.describe('Cart Page', ()=>{
     let cartPage: CartPage;
     let productDetails: ProductDetailsPage;
     let signup: SignupPage;
+    let checkout: CheckoutPage;
+    let login: LoginPage;
+    const username = generateUniqueUsername();
     const user = {
             ...validUser,
             email: generateUniqueEmail()
         };
+
     let accountCreated: AccountCreatedPage;
     test.beforeEach(async({page})=>{
         headerComponent = new HeaderComponent(page);
@@ -26,6 +33,9 @@ test.describe('Cart Page', ()=>{
         productDetails = new ProductDetailsPage(page);
         signup = new SignupPage(page);
         accountCreated = new AccountCreatedPage(page);
+        checkout = new CheckoutPage(page);
+        login = new LoginPage(page);
+        
         await headerComponent.open();
         await headerComponent.openProducts();
         
@@ -66,14 +76,14 @@ test.describe('Cart Page', ()=>{
 
     })
     test('Place order and register while checking out', async ()=>{
-        await product.openFirstProduct();
-        await productDetails.addToCart();
+        await product.addProductToCart(0);
+        await headerComponent.viewCartPromptRedirection();
 
-        await cartPage.verifyCartPageVisibility();
         await cartPage.proceedToCheckout();
 
         await headerComponent.loginRegisterRedirection();
 
+        await login.signupRedirect(username, user.email);
         await signup.registerUser(user);
         await expect(accountCreated.accountCreatedText).toBeVisible();
         await accountCreated.clickContinue();
@@ -82,17 +92,27 @@ test.describe('Cart Page', ()=>{
         await headerComponent.openCart();
 
         await cartPage.proceedToCheckout();
-        await headerComponent.loginRegisterRedirection();
+        
+        const expectedName = `${user.title}. ${user.firstName} ${user.lastName}`;
+        expect(checkout.deliveryAddressFirstLastName).toHaveText(expectedName);
+        expect(checkout.billingAddressFirstLastName).toHaveText(expectedName);
 
-        await signup.registerUser(user);
+        expect(checkout.deliveryCompany).toHaveText(user.company);
+        expect(checkout.billingCompany).toHaveText(user.company);
+        
+        expect(checkout.deliveryStreetAddress).toHaveText(user.address);
+        expect(checkout.billingStreetAddress).toHaveText(user.address);
 
-        expect(accountCreated.accountCreatedText).toBeVisible();
-        await accountCreated.clickContinue();
+        const expectedStateCityAndZipCode = `${user.city} ${user.state} ${user.zipcode}`;
+        expect(checkout.deliveryAddressStateCityZip).toHaveText(expectedStateCityAndZipCode);
+        expect(checkout.billingAddressStateCityZip).toHaveText(expectedStateCityAndZipCode);
 
-        expect(headerComponent.logoutButton).toBeVisible();
+        expect(checkout.deliveryAddressCountry).toHaveText(user.country);
+        expect(checkout.billingAddressCountry).toHaveText(user.country);
 
-        await headerComponent.openCart();
-        await cartPage.proceedToCheckout();
+        expect(checkout.deliveryAddressPhone).toHaveText(user.mobilePhone);
+        expect(checkout.billingAddressPhone).toHaveText(user.mobilePhone);
+        
         
     })
 })

@@ -44,7 +44,7 @@ export class SignupPage extends BasePage {
         this.birthYearSelect = page.locator('[data-qa="years"]');
         this.accountInformationLabel = page.getByText('Enter Account Information');
     }
-    async registerUser(user: User): Promise<void> {
+    async registerUser(user: User) {
         if (user.title === "Mr"){
             await this.mrRadioButton.check();
         } else {
