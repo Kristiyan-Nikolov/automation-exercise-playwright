@@ -10,8 +10,15 @@ import { AccountCreatedPage } from "../../../pages/auth/AccountCreatedPage";
 import { CheckoutPage } from "../../../pages/shop/CheckoutPage";
 import { LoginPage } from "../../../pages/auth/LoginPage";
 import { ValidCreditCard } from "../../../test-data/CreditCard";
+import { readFileSync } from 'node:fs';
+import { PaymentPage } from '../../../pages/shop/PaymentPage';
+import { DeleteAccountPage } from "../../../pages/auth/DeleteAccountPage";
+import { validLoginUser } from "../../../test-data/LoginUsers";
+
 
 test.describe('Cart Page', ()=>{
+    let deletedAccount : DeleteAccountPage;
+    let payment: PaymentPage;
     let headerComponent: HeaderComponent;
     let product: ProductPage;
     let cartPage: CartPage;
@@ -24,9 +31,15 @@ test.describe('Cart Page', ()=>{
             ...validUser,
             email: generateUniqueEmail()
         };
+    const checkoutDescription = readFileSync(
+        'test-data/checkoutDescription.txt',
+        'utf8',
+    ).trim();
 
     let accountCreated: AccountCreatedPage;
     test.beforeEach(async({page})=>{
+        deletedAccount = new DeleteAccountPage(page);
+        payment = new PaymentPage(page);
         headerComponent = new HeaderComponent(page);
         product = new ProductPage(page);
         cartPage = new CartPage(page);
@@ -37,10 +50,11 @@ test.describe('Cart Page', ()=>{
         login = new LoginPage(page);
         
         await headerComponent.open();
-        await headerComponent.openProducts();
+        
         
     })
     test('Add products in cart and verify name and price', async()=>{
+        await headerComponent.openProducts();
         const productFirst = await product.readProductDetails(0);
         await product.addProductToCart(0);
 
@@ -63,6 +77,7 @@ test.describe('Cart Page', ()=>{
 
     })
       test('Verify product quantity in cart', async ()=>{
+        await headerComponent.openProducts();
         await product.openFirstProduct();
         await productDetails.verifyProductDetails();
 
@@ -76,6 +91,7 @@ test.describe('Cart Page', ()=>{
 
     })
     test('Place order and register while checking out', async ()=>{
+        await headerComponent.openProducts();
         await product.addProductToCart(0);
         await headerComponent.viewCartPromptRedirection();
 
@@ -87,32 +103,130 @@ test.describe('Cart Page', ()=>{
         await signup.registerUser(user);
         await expect(accountCreated.accountCreatedText).toBeVisible();
         await accountCreated.clickContinue();
-        expect (headerComponent.logoutButton).toBeVisible();
+        await expect (headerComponent.logoutButton).toBeVisible();
 
         await headerComponent.openCart();
 
         await cartPage.proceedToCheckout();
         
         const expectedName = `${user.title}. ${user.firstName} ${user.lastName}`;
-        expect(checkout.deliveryAddressFirstLastName).toHaveText(expectedName);
-        expect(checkout.billingAddressFirstLastName).toHaveText(expectedName);
+        await expect(checkout.deliveryAddressFirstLastName).toHaveText(expectedName);
+        await expect(checkout.billingAddressFirstLastName).toHaveText(expectedName);
 
-        expect(checkout.deliveryCompany).toHaveText(user.company);
-        expect(checkout.billingCompany).toHaveText(user.company);
+        await expect(checkout.deliveryCompany).toHaveText(user.company);
+        await expect(checkout.billingCompany).toHaveText(user.company);
         
-        expect(checkout.deliveryStreetAddress).toHaveText(user.address);
-        expect(checkout.billingStreetAddress).toHaveText(user.address);
+        await expect(checkout.deliveryStreetAddress).toHaveText(user.address);
+        await expect(checkout.billingStreetAddress).toHaveText(user.address);
 
         const expectedStateCityAndZipCode = `${user.city} ${user.state} ${user.zipcode}`;
-        expect(checkout.deliveryAddressStateCityZip).toHaveText(expectedStateCityAndZipCode);
-        expect(checkout.billingAddressStateCityZip).toHaveText(expectedStateCityAndZipCode);
+        await expect(checkout.deliveryAddressStateCityZip).toHaveText(expectedStateCityAndZipCode);
+        await expect(checkout.billingAddressStateCityZip).toHaveText(expectedStateCityAndZipCode);
 
-        expect(checkout.deliveryAddressCountry).toHaveText(user.country);
-        expect(checkout.billingAddressCountry).toHaveText(user.country);
+        await expect(checkout.deliveryAddressCountry).toHaveText(user.country);
+        await expect(checkout.billingAddressCountry).toHaveText(user.country);
 
-        expect(checkout.deliveryAddressPhone).toHaveText(user.mobilePhone);
-        expect(checkout.billingAddressPhone).toHaveText(user.mobilePhone);
+        await expect(checkout.deliveryAddressPhone).toHaveText(user.mobilePhone);
+        await expect(checkout.billingAddressPhone).toHaveText(user.mobilePhone);
         
-        
+        await checkout.enterDescription(checkoutDescription);
+        await checkout.placeOrder();
+
+        await payment.fillCardPaymentInfo(ValidCreditCard);
+        await payment.payAndConfirmOrder();
+
+        await expect(payment.orderPlacedLabel).toBeVisible();
+        await headerComponent.deleteAccountRedirection();
+
+        await expect(deletedAccount.deleteAccountText).toBeVisible();
+        await deletedAccount.clickContinue();
+
     })
+    test('Place order and register before checking out', async()=>{
+        await headerComponent.openLoginPage();
+
+        await login.signupRedirect(username, user.email);
+        await signup.registerUser(user);
+        await expect(accountCreated.accountCreatedText).toBeVisible();
+        await accountCreated.clickContinue();
+        await expect (headerComponent.logoutButton).toBeVisible();
+
+        await headerComponent.openProducts();
+        await product.addProductToCart(0);
+        await headerComponent.viewCartPromptRedirection();
+
+        await cartPage.proceedToCheckout();
+
+        const expectedName = `${user.title}. ${user.firstName} ${user.lastName}`;
+        await expect(checkout.deliveryAddressFirstLastName).toHaveText(expectedName);
+        await expect(checkout.billingAddressFirstLastName).toHaveText(expectedName);
+
+        await expect(checkout.deliveryCompany).toHaveText(user.company);
+        await expect(checkout.billingCompany).toHaveText(user.company);
+        
+        await expect(checkout.deliveryStreetAddress).toHaveText(user.address);
+        await expect(checkout.billingStreetAddress).toHaveText(user.address);
+
+        const expectedStateCityAndZipCode = `${user.city} ${user.state} ${user.zipcode}`;
+        await expect(checkout.deliveryAddressStateCityZip).toHaveText(expectedStateCityAndZipCode);
+        await expect(checkout.billingAddressStateCityZip).toHaveText(expectedStateCityAndZipCode);
+
+        await expect(checkout.deliveryAddressCountry).toHaveText(user.country);
+        await expect(checkout.billingAddressCountry).toHaveText(user.country);
+
+        await expect(checkout.deliveryAddressPhone).toHaveText(user.mobilePhone);
+        await expect(checkout.billingAddressPhone).toHaveText(user.mobilePhone);
+
+        await checkout.enterDescription(checkoutDescription);
+        await checkout.placeOrder();
+
+        await payment.fillCardPaymentInfo(ValidCreditCard);
+        await payment.payAndConfirmOrder();
+
+        await expect(payment.orderPlacedLabel).toBeVisible();
+        await headerComponent.deleteAccountRedirection();
+
+        await expect(deletedAccount.deleteAccountText).toBeVisible();
+        await deletedAccount.clickContinue();
+    })
+    test('Place order and login before checking out', async()=>{
+        await headerComponent.openLoginPage();
+        await login.login(validLoginUser.email, validLoginUser.password);
+        await expect (headerComponent.logoutButton).toBeVisible();
+
+        await headerComponent.openProducts();
+        await product.addProductToCart(0);
+        await headerComponent.viewCartPromptRedirection();
+
+        await cartPage.proceedToCheckout();
+
+        const expectedName = `${user.title}. ${user.firstName} ${user.lastName}`;
+        await expect(checkout.deliveryAddressFirstLastName).toHaveText(expectedName);
+        await expect(checkout.billingAddressFirstLastName).toHaveText(expectedName);
+
+        await expect(checkout.deliveryCompany).toHaveText(user.company);
+        await expect(checkout.billingCompany).toHaveText(user.company);
+        
+        await expect(checkout.deliveryStreetAddress).toHaveText(user.address);
+        await expect(checkout.billingStreetAddress).toHaveText(user.address);
+
+        const expectedStateCityAndZipCode = `${user.city} ${user.state} ${user.zipcode}`;
+        await expect(checkout.deliveryAddressStateCityZip).toHaveText(expectedStateCityAndZipCode);
+        await expect(checkout.billingAddressStateCityZip).toHaveText(expectedStateCityAndZipCode);
+
+        await expect(checkout.deliveryAddressCountry).toHaveText(user.country);
+        await expect(checkout.billingAddressCountry).toHaveText(user.country);
+
+        await expect(checkout.deliveryAddressPhone).toHaveText(user.mobilePhone);
+        await expect(checkout.billingAddressPhone).toHaveText(user.mobilePhone);
+
+        await checkout.enterDescription(checkoutDescription);
+        await checkout.placeOrder();
+
+        await payment.fillCardPaymentInfo(ValidCreditCard);
+        await payment.payAndConfirmOrder();
+
+        await expect(payment.orderPlacedLabel).toBeVisible();
+    })
+    
 })

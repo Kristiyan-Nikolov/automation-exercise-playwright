@@ -25,7 +25,7 @@ export class CartPage extends BasePage{
     }
     async verifyCartPageVisibility()
     {
-        expect (this.proceedToCheckoutBtn).toBeVisible();
+        await expect (this.proceedToCheckoutBtn).toBeVisible();
     }
     async proceedToCheckout(){
         await this.proceedToCheckoutBtn.click();

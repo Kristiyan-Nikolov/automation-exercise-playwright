@@ -9,12 +9,14 @@ export class PaymentPage extends BasePage{
     readonly expirationMonth: Locator;
     readonly expirationYear: Locator;
     readonly payBtn: Locator;
+    readonly orderPlacedLabel: Locator;
     constructor(page:Page){
         super(page);
+        this.orderPlacedLabel = page.locator('[data-qa="order-placed"]');
         this.nameOnCard = page.locator('[data-qa="name-on-card"]');
         this.cardNumber = page.locator('[data-qa="card-number"]');
         this.cvcNumber = page.locator('[data-qa="cvc"]');
-        this.expirationMonth = page.locator('[data-qa="expiry_month"]');
+        this.expirationMonth = page.locator('[data-qa="expiry-month"]');
         this.expirationYear = page.locator('[data-qa="expiry-year"]');
         this.payBtn = page.locator('#submit');
     }

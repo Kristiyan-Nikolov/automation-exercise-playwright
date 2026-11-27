@@ -40,7 +40,7 @@ export class CheckoutPage extends BasePage{
         this.billingAddressStateCityZip = page.locator('#address_invoice .address_state_name');
         this.billingAddressCountry = page.locator('#address_invoice .address_country_name');
         this.billingAddressPhone = page.locator('#address_invoice .address_phone');
-        this.descriptionBox = page.locator('#message');
+        this.descriptionBox = page.locator('[name="message"]');
         this.placeOrderBtn = page.locator('a[href="/payment"]');
 
     }
